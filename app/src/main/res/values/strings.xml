@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">HealthApp</string>
+    <string name="loading_failed">Ошибка загрузки</string>
+    <string name="retry">Повторить запрос</string>
+    <string name="loading">Загрузка</string>
+    <string name="post_title">%s (%s)</string>
+    <string name="hide_post">Посмотреть</string>
+    <string name="expand_post">Скрыть</string>
+    <string name="expand_button_content_description">Посмотреть больше/меньше информации о посте</string>
 </resources>
