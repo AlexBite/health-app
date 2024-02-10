@@ -1,6 +1,5 @@
 package com.example.healthapp.data
 
-import com.example.healthapp.network.BooksApiService
 import com.example.healthapp.network.HealthApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -22,7 +21,7 @@ interface AppContainer {
 
 // Реализация контейнера по умолчанию
 class DefaultAppContainer : AppContainer {
-    private val BASE_URL = "https://android-kotlin-fun-mars-server.appspot.com/" // путь к данным
+    private val BASE_URL = "http://89.111.169.216/" // путь к данным
 
     // создаем объект Retrofit для HTTP запросов
     private val retrofit: Retrofit = Retrofit.Builder()

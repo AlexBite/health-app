@@ -65,6 +65,7 @@ fun HomeScreen(
                     ),
                 contentPadding = contentPadding
             )
+
         else -> ErrorScreen(retryAction, modifier)
     }
 }
@@ -78,6 +79,7 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
+
 // функция отображения ошибки при отсутствии данных для отображения с кнопкой перезапуска
 @Composable
 fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
@@ -147,6 +149,7 @@ fun PostCard(post: Posts, modifier: Modifier = Modifier) {
         }
     }
 }
+
 /**
  * Composable that displays a button that is clickable and displays an expand more or an expand less
  * icon.
@@ -237,6 +240,7 @@ fun PostsListScreenPreview() {
     HealthAppTheme {
         val mockData = List(10) {
             Posts(
+                0,
                 "Заголовок - $it",
                 "$it",
                 "Какой-то интересный пост. Какой-то интересный пост. " +
