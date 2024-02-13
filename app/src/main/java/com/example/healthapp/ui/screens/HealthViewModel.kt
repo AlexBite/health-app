@@ -9,7 +9,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.healthapp.HealthApplication
+import com.example.healthapp.data.BooksRepository
 import com.example.healthapp.data.PostsRepository
+import com.example.healthapp.model.Book
 import com.example.healthapp.model.Posts
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -24,12 +26,31 @@ sealed interface PostsUiState {
     object Loading : PostsUiState
 }
 
-/**
- * ViewModel containing the app data and method to retrieve the data
- */
-class HealthViewModel(private val postsRepository: PostsRepository) : ViewModel() {
+// изолированный интерфейс состояния для книг
+sealed interface BooksUiState {
+    data class Success(val books: List<Book>) : BooksUiState
+    object Error : BooksUiState
+    object Loading : BooksUiState
+}
 
-    // изменяемое состояние инициированное объектом Loading
+// модель общих состояний UI
+//data class HealthUiState(
+//    val postExpanded: Boolean = false,
+//    val menuExpanded: Boolean = false,
+//)
+/**
+ * ViewModel containing the app data and method to retrieve the data + UI states
+ */
+class HealthViewModel(
+    private val postsRepository: PostsRepository,
+    private val booksRepository: BooksRepository
+) : ViewModel() {
+
+    // Общие состояния UI
+//    private val _uiState = MutableStateFlow(HealthUiState())
+//    val uiState: StateFlow<HealthUiState> = _uiState.asStateFlow()
+
+    // изменяемое состояние инициированное объектом Loading для отображения постов
     var postsUiState: PostsUiState by mutableStateOf(PostsUiState.Loading)
         private set // состояние устанавливается только из класса
 
@@ -51,6 +72,28 @@ class HealthViewModel(private val postsRepository: PostsRepository) : ViewModel(
         }
     }
 
+    // изменяемое состояние инициированное объектом Loading для отображения книг
+    var booksUiState: BooksUiState by mutableStateOf(BooksUiState.Loading)
+        private set // состояние устанавливается только из класса
+
+    // инициализация функции извлечения постов при создании ViewModel
+    init {
+        getBooks()
+    }
+    // функция изменения
+    fun getBooks() {
+        viewModelScope.launch {
+            booksUiState = BooksUiState.Loading
+            booksUiState = try {
+                BooksUiState.Success(booksRepository.getBooks(query = "vegan", maxResults = 20))
+            } catch (e: IOException) { // ловим общие ошибки при GET-запросе
+                BooksUiState.Error  // выводим сообщение об ошибке
+            } catch (e: HttpException) { // ловим общие ошибки при GET-запросе
+                BooksUiState.Error // выводим сообщение об ошибке
+            }
+        }
+    }
+
     /**
      * Factory for HealthViewModel который берет HealthRepository как зависимость
      */
@@ -61,7 +104,8 @@ class HealthViewModel(private val postsRepository: PostsRepository) : ViewModel(
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]
                         as HealthApplication)
                 val postsRepository = application.container.postsRepository
-                HealthViewModel(postsRepository = postsRepository)
+                val booksRepository = application.container.booksRepository
+                HealthViewModel(postsRepository = postsRepository, booksRepository = booksRepository)
             }
         }
     }

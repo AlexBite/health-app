@@ -1,11 +1,13 @@
 package com.example.healthapp.model.books
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
-
+@Serializable
 data class VolumeInfo (
 
   @SerializedName("title"               ) var title               : String?                        = null,
+  @SerializedName("subtitle"               ) var subtitle               : String?                        = null,
   @SerializedName("authors"             ) var authors             : ArrayList<String>              = arrayListOf(),
   @SerializedName("publisher"           ) var publisher           : String?                        = null,
   @SerializedName("publishedDate"       ) var publishedDate       : String?                        = null,
@@ -13,7 +15,10 @@ data class VolumeInfo (
   @SerializedName("industryIdentifiers" ) var industryIdentifiers : ArrayList<IndustryIdentifiers> = arrayListOf(),
   @SerializedName("readingModes"        ) var readingModes        : ReadingModes?                  = ReadingModes(),
   @SerializedName("printType"           ) var printType           : String?                        = null,
+  @SerializedName("pageCount" ) var pageCount : Int? = null,
   @SerializedName("categories"          ) var categories          : ArrayList<String>              = arrayListOf(),
+  @SerializedName("averageRating" ) var averageRating : Float? = null,
+  @SerializedName("ratingsCount" ) var ratingsCount : Int? = null,
   @SerializedName("maturityRating"      ) var maturityRating      : String?                        = null,
   @SerializedName("allowAnonLogging"    ) var allowAnonLogging    : Boolean?                       = null,
   @SerializedName("contentVersion"      ) var contentVersion      : String?                        = null,

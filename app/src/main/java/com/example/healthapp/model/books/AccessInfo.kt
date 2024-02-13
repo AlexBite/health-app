@@ -1,8 +1,9 @@
 package com.example.healthapp.model.books
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
-
+@Serializable
 data class AccessInfo (
 
   @SerializedName("country"                ) var country                : String?  = null,

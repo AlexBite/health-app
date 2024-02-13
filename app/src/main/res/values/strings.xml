@@ -4,7 +4,14 @@
     <string name="retry">Повторить запрос</string>
     <string name="loading">Загрузка</string>
     <string name="post_title">%s (%s)</string>
+    <string name="book_title">%A</string>
     <string name="hide_post">Посмотреть</string>
     <string name="expand_post">Скрыть</string>
     <string name="expand_button_content_description">Посмотреть больше/меньше информации о посте</string>
+    <string name="books">Книги о веганстве</string>
+    <string name="posts">Статьи о ЗОЖ</string>
+    <string name="video">Видео о веганстве</string>
+    <string name="back_button">Back</string>
+    <string name="hello_title">Дорогой друг !</string>
+    <string name="hello_text">Мы постарались собрать в одном месте различные материалы по Здоровому образу жизни.:\n\n - статьи по ЗОЖ\n\n - обзор веганских книг\n\nСкорее жми на иконку меню и окунись в мир свободный от шлаков и боли.</string>
 </resources>
