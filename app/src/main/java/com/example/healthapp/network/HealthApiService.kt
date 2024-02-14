@@ -5,8 +5,7 @@ import retrofit2.http.GET
 
 // интерфейс HTTP запросов
 interface HealthApiService {
-    @GET("amphibians")
-    // @GET("api/v1/feed/all")
+     @GET("api/v1/feed/all")
     suspend fun getPosts(): List<Posts>
 }
 

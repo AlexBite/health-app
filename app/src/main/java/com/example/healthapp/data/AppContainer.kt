@@ -24,8 +24,7 @@ interface AppContainer {
 // Реализация контейнера по умолчанию
 class DefaultAppContainer : AppContainer {
 
-    private val BASE_URL = "https://android-kotlin-fun-mars-server.appspot.com/"
-    //private val BASE_URL = "http://89.111.169.216/"
+    private val BASE_URL = "http://89.111.169.216/"
     private val BASE_URL1 = "https://www.googleapis.com/books/v1/"
 
     // создаем объект Retrofit для HTTP запросов

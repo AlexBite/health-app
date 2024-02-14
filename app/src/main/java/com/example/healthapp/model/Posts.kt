@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 // Модель получаемых данных
 @Serializable
 data class Posts(
-    // val id: Int,
+    val id: Int,
     val name: String,
     val type: String,
     val description: String,
