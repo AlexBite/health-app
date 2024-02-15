@@ -14,4 +14,6 @@
     <string name="back_button">Back</string>
     <string name="hello_title">Дорогой друг !</string>
     <string name="hello_text">Мы постарались собрать в одном месте различные материалы по Здоровому образу жизни.:\n\n - статьи по ЗОЖ\n\n - обзор веганских книг\n\nСкорее жми на иконку меню и окунись в мир здорового образа жизни.</string>
+
+    <string name="navigation_back">Back</string>
 </resources>

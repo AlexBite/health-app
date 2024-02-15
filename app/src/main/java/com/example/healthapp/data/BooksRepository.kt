@@ -5,7 +5,8 @@ import com.example.healthapp.network.BooksApiService
 
 // интерфейс извлечения данных в Репозиторий типа List
 interface BooksRepository {
-    suspend fun getBooks(query: String, maxResults: Int) : List<Book>
+    suspend fun getBooks(query: String, orderBy: String, maxResults: Int) : List<Book>
+
 }
 
 class DefaultBooksRepository(
@@ -13,9 +14,11 @@ class DefaultBooksRepository(
 ) : BooksRepository {
     override suspend fun getBooks(
         query: String,
+        orderBy: String,
         maxResults: Int
-    ): List<Book> = bookApiService.bookSearch(query, maxResults).items.map { items ->
+    ): List<Book> = bookApiService.bookSearch(query, orderBy, maxResults).items.map { items ->
         Book(
+            //id = items?.id,
             title = items.volumeInfo?.title,
             previewLink = items.volumeInfo?.previewLink,
             imageLink = items.volumeInfo?.imageLinks?.thumbnail,

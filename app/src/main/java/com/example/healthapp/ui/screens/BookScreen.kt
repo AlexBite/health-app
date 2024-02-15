@@ -14,13 +14,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -43,34 +40,49 @@ fun BookScreen(
     booksUiState: BooksUiState,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    detailUiState : HealthUiState,
+    onBookCardPressed: (Book) -> Unit,
+    onDetailScreenBackPressed: () -> Unit,
 ) {
     when (booksUiState) {
         is BooksUiState.Loading -> LoadingScreen(modifier.size(200.dp))
         is BooksUiState.Success ->
-            BooksListScreen(
-                books = booksUiState.books,
-                modifier = modifier
-                    .padding(
-                        start = dimensionResource(R.dimen.padding_small),
-                        top = dimensionResource(R.dimen.padding_small),
-                        end = dimensionResource(R.dimen.padding_small)
-                    ),
-                contentPadding = contentPadding
+            if (detailUiState.isShowingBookScreen) {
+                BooksListScreen(
+                    books = booksUiState.books,
+                    modifier = modifier
+                        .padding(
+                            start = dimensionResource(R.dimen.padding_small),
+                            top = dimensionResource(R.dimen.padding_small),
+                            end = dimensionResource(R.dimen.padding_small)
+                        ),
+                    contentPadding = contentPadding,
+                    onBookCardPressed = onBookCardPressed,
             )
+            } else {
+                BookDetailScreen(
+                    detailUiState = detailUiState,
+                    onBackPressed = onDetailScreenBackPressed,
+                    modifier = modifier,
+                    )
+         }
         else -> ErrorScreen(retryAction, modifier)
     }
 }
 
 // функция отображения каждого поста в карточке
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookCard(book: Book, modifier: Modifier = Modifier) {
-    // временное состояние кнопки Развернуть
-    var expanded by remember { mutableStateOf(false) }
-
+fun BookCard(
+    book: Book,
+    modifier: Modifier = Modifier,
+    onCardClick: () -> Unit,
+    ) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
+        onClick = onCardClick
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             book.title?.let {
@@ -87,6 +99,7 @@ fun BookCard(book: Book, modifier: Modifier = Modifier) {
                     overflow = TextOverflow.Ellipsis
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
             // отображение фото
             AsyncImage(
                 modifier = Modifier
@@ -97,32 +110,10 @@ fun BookCard(book: Book, modifier: Modifier = Modifier) {
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
-                contentScale = ContentScale.FillWidth,  // попробовать Crop
+                contentScale = ContentScale.FillWidth,
                 error = painterResource(id = R.drawable.ic_broken_image),
                 placeholder = painterResource(id = R.drawable.loading_img)
             )
-
-            Spacer(modifier = Modifier.weight(1f))
-            // Кнопка развернуть/свернуть
-            ExpandButton(
-                expanded = expanded,
-                onClick = { expanded = !expanded },
-            )
-            if (expanded) {
-                book.description?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Justify,
-                        modifier = Modifier.padding(
-                            start = dimensionResource(R.dimen.padding_medium),
-                            top = dimensionResource(R.dimen.padding_small),
-                            bottom = dimensionResource(R.dimen.padding_medium),
-                            end = dimensionResource(R.dimen.padding_medium)
-                        )
-                    )
-                }
-            }
         }
     }
 }
@@ -132,7 +123,8 @@ fun BookCard(book: Book, modifier: Modifier = Modifier) {
 private fun BooksListScreen(
     books: List<Book>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    onBookCardPressed: (Book) -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(150.dp),
@@ -140,10 +132,14 @@ private fun BooksListScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         itemsIndexed(books) { _, book ->
-            BookCard(book = book, modifier)
+            BookCard(
+                book = book,
+                modifier,
+                onCardClick = {onBookCardPressed(book)}
+            )
         }
     }
-
+// Альтернативное отображение карточек книг
 //    LazyColumn(
 //        modifier = modifier,
 //        contentPadding = contentPadding,
@@ -166,12 +162,13 @@ fun BooksListScreenPreview() {
     HealthAppTheme {
         val mockData = List(10) {
             Book(
+                "",
                 "Заголовок - $it",
                 "",
                 "",
-                "Описание книги. Описание книги. Описание книги. Описание книги."
+                //"Описание книги. Описание книги. Описание книги. Описание книги."
             )
         }
-        BooksListScreen(mockData, Modifier.fillMaxSize())
+        BooksListScreen(mockData, Modifier.fillMaxSize(), onBookCardPressed = {} )
     }
 }

@@ -9,6 +9,7 @@ interface BooksApiService {
     @GET("volumes")
     suspend fun bookSearch(
         @Query("q") searchQuery: String,
+        @Query("orderBy") orderBy : String,
         @Query("maxResults") maxResults: Int
     ): BookShelf
 }

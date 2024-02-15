@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RetailPrice (
 
-  @SerializedName("amountInMicros" ) var amountInMicros : Int?    = null,
+  @SerializedName("amountInMicros" ) var amountInMicros : Long?    = null,
   @SerializedName("amount" ) var amount : Float?    = null,
   @SerializedName("currencyCode"   ) var currencyCode   : String? = null
 

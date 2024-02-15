@@ -11,8 +11,12 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.healthapp.HealthApplication
 import com.example.healthapp.data.BooksRepository
 import com.example.healthapp.data.PostsRepository
+import com.example.healthapp.data.local.LocalBookDataProvider
 import com.example.healthapp.model.Book
 import com.example.healthapp.model.Posts
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -38,6 +42,11 @@ sealed interface BooksUiState {
 //    val postExpanded: Boolean = false,
 //    val menuExpanded: Boolean = false,
 //)
+data class HealthUiState(
+    val currentSelectedBook: Book = LocalBookDataProvider.defaultBook,
+    val isShowingBookScreen: Boolean = true
+)
+
 /**
  * ViewModel containing the app data and method to retrieve the data + UI states
  */
@@ -47,8 +56,28 @@ class HealthViewModel(
 ) : ViewModel() {
 
     // Общие состояния UI
-//    private val _uiState = MutableStateFlow(HealthUiState())
-//    val uiState: StateFlow<HealthUiState> = _uiState.asStateFlow()
+
+    private val _uiState = MutableStateFlow(HealthUiState())
+    val uiState: StateFlow<HealthUiState> = _uiState
+
+    // обновляем общие состояния
+    fun updateDetailScreenStates(book: Book) {
+        _uiState.update {
+            it.copy(
+                currentSelectedBook = book,
+                isShowingBookScreen = false
+            )
+        }
+    }
+    // скидываем общие состояния на дефолтные значения
+    fun resetBookScreenStates() {
+        _uiState.update {
+            it.copy(
+                currentSelectedBook = LocalBookDataProvider.defaultBook,
+                isShowingBookScreen = true
+            )
+        }
+    }
 
     // изменяемое состояние инициированное объектом Loading для отображения постов
     var postsUiState: PostsUiState by mutableStateOf(PostsUiState.Loading)
@@ -85,7 +114,7 @@ class HealthViewModel(
         viewModelScope.launch {
             booksUiState = BooksUiState.Loading
             booksUiState = try {
-                BooksUiState.Success(booksRepository.getBooks(query = "vegan", maxResults = 20))
+                BooksUiState.Success(booksRepository.getBooks(query = "vegan", orderBy = "newest", maxResults = 40))
             } catch (e: IOException) { // ловим общие ошибки при GET-запросе
                 BooksUiState.Error  // выводим сообщение об ошибке
             } catch (e: HttpException) { // ловим общие ошибки при GET-запросе

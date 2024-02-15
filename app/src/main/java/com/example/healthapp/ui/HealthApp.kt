@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.healthapp.model.Book
 import com.example.healthapp.ui.screens.PostsScreen
 
 // перечень экранов
@@ -47,6 +49,10 @@ fun HealthApp(
     )
     val healthViewModel: HealthViewModel =
         viewModel(factory = HealthViewModel.Factory)
+
+    // для хранения состояния Деталей
+    val detailUiState = healthViewModel.uiState.collectAsState().value
+
     Scaffold(
         modifier = Modifier
             //.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -87,6 +93,15 @@ fun HealthApp(
                         retryAction = healthViewModel::getBooks,
                         modifier = Modifier.fillMaxSize(),
                         //contentPadding = innerPadding
+                        detailUiState = detailUiState,
+                        onBookCardPressed = { book: Book ->
+                            healthViewModel.updateDetailScreenStates(
+                                book = book
+                            )
+                        },
+                        onDetailScreenBackPressed = {
+                            healthViewModel.resetBookScreenStates()
+                        },
                     )
                 }
             }
